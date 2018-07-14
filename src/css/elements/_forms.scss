@@ -1,0 +1,55 @@
+/* Checkbox */
+.checkbox-wrapper {
+	label {
+		cursor: pointer;
+
+		&:before {
+			margin-right: 5px;
+			display: inline-block;
+			content: '';
+			background: url(../images/icons/icon-checkbox.png) top center / 16px 32px no-repeat;
+			background-position: 0 0;
+			width: 16px;
+			height: 16px;
+			vertical-align: text-bottom;
+		}
+	}
+
+	input[type="checkbox"] {
+		display: none;
+
+		&:checked ~ label {
+			&:before {
+				background-position: 0 -16px;
+			}
+		}
+	}
+}
+
+/* Radio */
+.radio-wrapper {
+	label {
+		cursor: pointer;
+
+		&:before {
+			margin-right: 5px;
+			display: inline-block;
+			content: '';
+			background: url(../images/icons/icon-radio.png) top center / 16px 32px no-repeat;
+			background-position: 0 0;
+			width: 16px;
+			height: 16px;
+			vertical-align: text-bottom;
+		}
+	}
+
+	input[type="radio"] {
+		display: none;
+
+		&:checked ~ label {
+			&:before {
+				background-position: 0 -16px;
+			}
+		}
+	}
+}

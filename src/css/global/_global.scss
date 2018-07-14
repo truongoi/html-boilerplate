@@ -1,0 +1,63 @@
+/* GLOBAL */
+body {
+	margin: 0;
+	padding: 0;
+
+	background: #fff;
+	color: #000;
+
+	font-family: $font-default;
+	font-size: 16px;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+img {
+	display: inline-block;
+	max-width: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+hr {
+	display: block;
+	margin: 20px auto;
+	border: none;
+	border-top: 1px solid black;
+}
+
+.overflow-hidden {
+	overflow: hidden;
+}
+
+.hidden {
+	display: none;
+}
+
+.icon {
+	display: block;
+}
+
+.icon-inline {
+	display: inline-block;
+}
+
+.text-left {
+	text-align: left;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.text-right {
+	text-align: right;
+}
+
+.container {
+	padding: 0 20px;
+}

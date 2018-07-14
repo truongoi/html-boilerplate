@@ -1,0 +1,408 @@
+@mixin clear-text {
+	border: 0;
+	color: transparent;
+	font: 0/0 a;
+	text-shadow: none;
+}
+
+%ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+%clearfix {
+	*zoom: 1;
+	&:before, &:after{
+		content: "";
+		display: table;
+	}
+	&:after {
+		clear: both;
+	}
+}
+
+.clearfix {
+	@extend %clearfix;
+}
+
+@mixin opacity($opacity) {
+	opacity: $opacity;
+	$opacity-ie: $opacity * 100;
+	filter: alpha(opacity=$opacity-ie); //IE8
+}
+
+@mixin optional-at-root($sel) {
+	@at-root #{if(not &, $sel, selector-append(&, $sel))} {
+		@content;
+	}
+}
+
+@mixin placeholder {
+	@include optional-at-root('::-webkit-input-placeholder') {
+		@content;
+	}
+
+	@include optional-at-root(':-moz-placeholder') {
+		@content;
+	}
+
+	@include optional-at-root('::-moz-placeholder') {
+		@content;
+	}
+
+	@include optional-at-root(':-ms-input-placeholder') {
+		@content;
+	}
+}
+
+@mixin css-triangle($triangle-size, $triangle-color, $triangle-direction) {
+	content: "";
+	display: block;
+	width: 0;
+	height: 0;
+	border: inset $triangle-size;
+	@if ($triangle-direction == top) {
+		border-color: $triangle-color transparent transparent transparent;
+		border-top-style: solid;
+	}
+	@if ($triangle-direction == bottom) {
+		border-color: transparent transparent $triangle-color transparent;
+		border-bottom-style: solid;
+	}
+	@if ($triangle-direction == left) {
+		border-color: transparent transparent transparent $triangle-color;
+		border-left-style: solid;
+	}
+	@if ($triangle-direction == right) {
+		border-color: transparent $triangle-color transparent transparent;
+		border-right-style: solid;
+	}
+}
+
+@mixin triangle($triangle-size, $triangle-color, $triangle-direction, $other-size) {
+	content: "";
+	display: block;
+	width: 0;
+	height: 0;
+
+	@if ($triangle-direction == top) {
+		border-left: $other-size solid transparent;
+		border-right: $other-size solid transparent;
+
+		border-top: $triangle-size solid $triangle-color;
+	}
+	@if ($triangle-direction == bottom) {
+		border-left: $other-size solid transparent;
+		border-right: $other-size solid transparent;
+
+		border-bottom: $triangle-size solid $triangle-color;
+	}
+	@if ($triangle-direction == left) {
+		border-top: $other-size solid transparent;
+		border-bottom: $other-size solid transparent;
+
+		border-left: $triangle-size solid $triangle-color;
+	}
+	@if ($triangle-direction == right) {
+		border-top: $other-size solid transparent;
+		border-bottom: $other-size solid transparent;
+
+		border-right:$triangle-size solid $triangle-color;
+	}
+}
+
+@function convert-angle($value, $unit) {
+	$convertable-units: deg grad turn rad;
+	$conversion-factors: 1 (10grad/9deg) (1turn/360deg) (3.1415926rad/180deg);
+	@if index($convertable-units, unit($value)) and index($convertable-units, $unit) {
+		@return $value
+		/ nth($conversion-factors, index($convertable-units, unit($value)))
+		* nth($conversion-factors, index($convertable-units, $unit));
+	}
+
+	@warn "Cannot convert `#{unit($value)}` to `#{$unit}`.";
+}
+
+@function is-direction($value) {
+	$is-direction: index((to top, to top right, to right top, to right, to bottom right, to right bottom, to bottom, to bottom left, to left bottom, to left, to left top, to top left), $value);
+	$is-angle: type-of($value) == 'number' and index('deg' 'grad' 'turn' 'rad', unit($value));
+
+	@return $is-direction or $is-angle;
+}
+
+@function legacy-direction($value) {
+	@if is-direction($value) == false {
+		@warn "Cannot convert `#{$value}` to legacy syntax because it doesn't seem to be an angle or a direction";
+	}
+
+	$conversion-map: (
+		to top          : bottom,
+		to top right    : bottom left,
+		to right top    : left bottom,
+		to right        : left,
+		to bottom right : top left,
+		to right bottom : left top,
+		to bottom       : top,
+		to bottom left  : top right,
+		to left bottom  : right top,
+		to left         : right,
+		to left top     : right bottom,
+		to top left     : bottom right
+		);
+
+	@if map-has-key($conversion-map, $value) {
+		@return map-get($conversion-map, $value);
+	}
+
+	@return 90deg - convert-angle($value, 'deg');
+}
+
+@mixin linear-gradient($direction, $color-stops...) {
+	@if is-direction($direction) == false {
+		$color-stops: ($direction, $color-stops);
+		$direction: 180deg;
+	}
+
+	background: nth(nth($color-stops, 1), 1);
+	background: -webkit-linear-gradient(legacy-direction($direction), $color-stops);
+	background: -moz-linear-gradient($direction, $color-stops);
+	background: -o-linear-gradient($direction, $color-stops);
+	background: linear-gradient($direction, $color-stops);
+}
+
+@mixin gradient-old($from-color, $to-color) {
+    background-color: mix($from-color, $to-color); /* Fallback */
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from($from-color), to($to-color));
+    background-image: -webkit-linear-gradient(top, $from-color, $to-color);
+    background-image:    -moz-linear-gradient(top, $from-color, $to-color);
+    background-image:      -o-linear-gradient(top, $from-color, $to-color);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#{$from-color}', EndColorStr='#{$to-color}')";
+}
+
+@mixin responsive-bg-image($image-width, $image-height) {
+	background-size: 100%;
+	height: 0;
+	padding-bottom: percentage($image-height / $image-width);
+}
+
+@mixin vertical-align {
+  &:before {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%; width: .1px;
+  }
+}
+
+@mixin center($pos:both ) {
+  position: absolute;
+
+  @if ($pos==both) {
+    top: 50%;
+    left: 50%;
+    -webkit-transform: perspective(1px) translate(-50%, -50%);
+    -ms-transform: perspective(1px) translate(-50%, -50%);
+    transform: perspective(1px) translate(-50%, -50%);
+  } @else if ($pos==top) {
+    left: 50%;
+    -webkit-transform: perspective(1px) translate(-50%, 0);
+    -ms-transform: perspective(1px) translate(-50%, 0);
+    transform: perspective(1px) translate(-50%, 0);
+  } @else if ($pos==left) {
+    top: 50%;
+    -webkit-transform: perspective(1px) translate(0, -50%);
+    -ms-transform: perspective(1px) translate(0, -50%);
+    transform: perspective(1px) translate(0, -50%);
+  } @else if ($pos==right) {
+    top: 50%;
+    right:0;
+    -webkit-transform: perspective(1px) translate(0, -50%);
+    -ms-transform: perspective(1px) translate(0, -50%);
+    transform: perspective(1px) translate(0, -50%);
+  } @else if ($pos==bottom) {
+    bottom: 0;
+    left:50%;
+    -webkit-transform: perspective(1px) translate(-50%, 0);
+    -ms-transform: perspective(1px) translate(-50%, 0);
+    transform: perspective(1px) translate(-50%, 0);
+  }
+}
+
+%hide-select-arrow {
+	&::-ms-expand {
+		display: none;
+	}
+
+	-webkit-appearance: none;
+  -moz-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  outline: none;
+}
+
+@function text-stroke($size: 2, $color: #fff, $correction: 0) {
+	$radius: $size - $correction;
+	$stroke: ();
+
+	@for $i from -$size through $size {
+		@for $k from -$size through $size {
+
+			$x: $k;
+			$y: $i;
+
+			@if $k > 0 {
+				$x: $k - 0.5;
+			} @elseif $k < 0 {
+				$x: $k + 0.5;
+			}
+
+			@if $i > 0 {
+				$y: $i - 0.5;
+			} @elseif $i < 0 {
+				$y: $i + 0.5;
+			}
+
+			@if ($x*$x + $y*$y <= $radius*$radius) {
+				$stroke: append($stroke, $i*1px $k*1px 0 $color, comma);
+			}
+		}
+	}
+
+	@return $stroke;
+}
+
+@mixin text-stroke($size: 2, $color: #fff, $correction: 0) {
+	text-shadow: text-stroke($size, $color, $correction);
+}
+
+@mixin position($position, $args: ()) {
+  $offsets: top right bottom left;
+  position: $position;
+
+  @each $offset in $offsets {
+    $index: index($args, $offset);
+
+    @if $index {
+      @if $index == length($args) {
+        #{$offset}: 0;
+      }
+      @else {
+        $next: nth($args, $index + 1);
+        @if is-valid-length($next) {
+          #{$offset}: $next;
+        }
+        @else if index($offsets, $next) {
+          #{$offset}: 0;
+        }
+        @else {
+          @warn "Invalid value `#{$next}` for offset `#{$offset}`.";
+        }
+      }
+    }
+  }
+}
+
+@function is-valid-length($value) {
+  @return (type-of($value) == "number" and not unitless($value))
+       or (index(auto initial inherit 0, $value) != null);
+}
+
+@mixin absolute($args: ()) {
+  @include position(absolute, $args);
+}
+
+@mixin fixed($args: ()) {
+  @include position(fixed, $args);
+}
+
+@mixin relative($args: ()) {
+  @include position(relative, $args);
+}
+
+@mixin hamburger(
+  $color: #000,
+  $color-hover: #111,
+  $width: 30px,
+  $height: 20px,
+  $weight: 2px,
+  $bars: 3
+) {
+	// box-shadow CSS output
+	$shadow: ();
+	$hover-shadow: ();
+
+  // Spacing between bars is calculated based on the total height of the icon and the weight of each bar
+  $spacing: ($height - ($weight * $bars)) / ($bars - 1);
+
+  @if unit($spacing) == 'px' {
+    $spacing: floor($spacing);
+  }
+
+  @for $i from 1 through $bars {
+    $offset: ($weight + $spacing) * ($i - 1);
+    $shadow: append($shadow, 0 $offset 0 $color, comma);
+  }
+
+  // Icon container
+  @include clear-text;
+  position: relative;
+  display: block;
+  vertical-align: middle;
+  width: $width;
+  height: $height;
+  cursor: pointer;
+
+  // Icon bars
+  &::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    display: block;
+    width: 100%;
+    height: $weight;
+
+    background: $color;
+    box-shadow: $shadow;
+
+    content: '';
+  }
+
+  // Hover state
+  @if $color-hover {
+    // Generate CSS
+    @for $i from 2 through $bars {
+      $offset: ($weight + $spacing) * ($i - 1);
+      $hover-shadow: append($hover-shadow, 0 $offset 0 $color-hover, comma);
+    }
+
+    &:hover::after {
+      background: $color-hover;
+      box-shadow: $hover-shadow;
+    }
+  }
+}
+
+@mixin dot($size) {
+	width: $size;
+	height: $size;
+	border-radius: 50%;
+}
+
+%clear-input-background {
+	input:-webkit-autofill,
+	input:-webkit-autofill:hover,
+	input:-webkit-autofill:focus
+	input:-webkit-autofill,
+	textarea:-webkit-autofill,
+	textarea:-webkit-autofill:hover
+	textarea:-webkit-autofill:focus,
+	select:-webkit-autofill,
+	select:-webkit-autofill:hover,
+	select:-webkit-autofill:focus {
+	  -webkit-text-fill-color: #fff;
+	  -webkit-box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0) inset;
+	  transition: background-color 5000s ease-in-out 0s;
+	}
+}

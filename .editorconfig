@@ -1,0 +1,9 @@
+root = true
+
+[scr/*]
+end_of_line = lf
+insert_final_newline = true
+
+[scr/templates/**.edge, scr/js/**.js, scr/sass/**.scss]
+indent_style = space
+indent_size = 2

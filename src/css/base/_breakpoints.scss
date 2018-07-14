@@ -1,0 +1,35 @@
+/* BREAKPOINTS */
+
+$breakpoints: (
+	xs: 640px,
+	small: 768px,
+	medium: 1024px,
+	large: 1280px
+);
+
+@mixin screen($breakpoint, $mobileFirst: true) {
+  @if $mobileFirst {
+    @if map-has-key($breakpoints, $breakpoint) {
+      @media (min-width: #{map-get($breakpoints, $breakpoint)}) {
+        @content;
+      }
+    }
+    @else {
+      @media (min-width: $breakpoint) {
+        @content;
+      }
+    }
+  }
+  @else {
+    @if map-has-key($breakpoints, $breakpoint) {
+      @media (max-width: #{map-get($breakpoints, $breakpoint) - 1}) {
+        @content;
+      }
+    }
+    @else {
+      @media (max-width: $breakpoint - 1) {
+        @content;
+      }
+    }
+  }
+}
