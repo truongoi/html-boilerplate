@@ -16,9 +16,9 @@ function watch () {
 }
 
 gulp.task('dev', gulp.series(
-  clean, gulp.parallel(styles, templates, scripts, images), serve, watch
+  clean, gulp.parallel(styles, scripts, images, templates), serve, watch
 ))
 
 gulp.task('build', gulp.series(
-  clean, gulp.parallel(styles, templates, scripts, images)
+  clean, gulp.parallel(styles, scripts, images, templates)
 ))

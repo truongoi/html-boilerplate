@@ -11,6 +11,7 @@ function reload (done) {
 function serve (done) {
   server.init({
     online: true,
+    reloadDelay: 100,
     ghostMode: false,
     open: 'external',
     notify: false,
