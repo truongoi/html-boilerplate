@@ -1,18 +1,33 @@
 const path = require('path')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 let mode = 'development'
 let plugins = [
   new MiniCssExtractPlugin({
-    filename: "../css/[name].css",
-    chunkFilename: "../css/[id].css"
+    filename: "../css/[name].css"
+  }),
+  new HtmlWebpackPlugin({
+    template: './src/templates/pages/index.edge'
   })
 ]
+let minimizer = []
 
 if (process.env.NODE_ENV === 'production') {
   mode = 'production'
-  plugins.push(new UglifyJsPlugin())
+  minimizer.push(
+    new UglifyJsPlugin({
+      cache: true,
+      parallel: true
+    }),
+    new OptimizeCSSAssetsPlugin({
+      cssProcessor: require('cssnano'),
+      cssProcessorOptions: { safe: true, discardComments: { removeAll: true } },
+      canPrint: true
+    })
+  )
 }
 
 module.exports = {
@@ -32,7 +47,8 @@ module.exports = {
           enforce: true
         }
       }
-    }
+    },
+    minimizer
   },
   module: {
     rules: [

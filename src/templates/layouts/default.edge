@@ -3,17 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <title>{{ pageTitle }}</title>
-  <link rel="stylesheet" href="css/vendors.css">
-  <link rel="stylesheet" href="css/app.css">
+  <!-- <link rel="stylesheet" href="css/vendors.css">
+  <link rel="stylesheet" href="css/app.css"> -->
 </head>
 <body>
+  <!-- HEADER -->
   @include('partials.header')
+  <!-------------------->
+  <!-- MAIN CONTENT -->
   <main>
     @!section('content')
   </main>
+  <!-------------------->
+  <!-- FOOTER -->
   @include('partials.footer')
+  <!-------------------->
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="js/vendors.js"></script>
-<script src="js/main.js"></script>
+<!-- <script src="js/vendors.js"></script>
+<script src="js/main.js"></script> -->
 </html>
