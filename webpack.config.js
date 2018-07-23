@@ -2,15 +2,11 @@ const path = require('path')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 let mode = 'development'
 let plugins = [
   new MiniCssExtractPlugin({
     filename: "../css/[name].css"
-  }),
-  new HtmlWebpackPlugin({
-    template: './src/templates/pages/index.edge'
   })
 ]
 let minimizer = []

@@ -1,1 +1,11 @@
 /* HOME */
+.abc {
+  .def {
+    .btn-a {
+      color: red;
+      @include hover {
+        color: blue;
+      }
+    }
+  }
+}
